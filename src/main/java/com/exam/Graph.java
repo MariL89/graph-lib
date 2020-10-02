@@ -21,7 +21,7 @@ public class Graph<T> {
         if (mapVertices.containsKey(vertex)) {
             throw new IllegalAccessException("Vertex already added");
         }
-        mapVertices.putIfAbsent(vertex, new HashSet<>());
+        mapVertices.put(vertex, new HashSet<>());
     }
 
     public void removeVertex(T vertex) {
@@ -35,21 +35,14 @@ public class Graph<T> {
             throw new IllegalAccessException("Equals vertices");
         }
         mapVertices.computeIfAbsent(v1, a -> new HashSet<>()).add(v2);
-        Set<T> v2List = mapVertices.computeIfAbsent(v2, a -> new HashSet<>());
         if (!directed) {
-            v2List.add(v1);
+            mapVertices.computeIfAbsent(v2, a -> new HashSet<>()).add(v1);
         }
     }
 
     public void removeEdge(T v1, T v2) {
-        Set<T> eV1 = mapVertices.get(v1);
-        Set<T> eV2 = mapVertices.get(v2);
-        if (eV1 != null) {
-            eV1.remove(v2);
-        }
-        if (eV2 != null) {
-            eV2.remove(v1);
-        }
+        mapVertices.getOrDefault(v1, Collections.emptySet()).remove(v2);
+        mapVertices.getOrDefault(v2, Collections.emptySet()).remove(v1);
     }
 
     @SneakyThrows
